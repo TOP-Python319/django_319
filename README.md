@@ -36,3 +36,8 @@
 - `pwd` - показать текущую директорию
 
 **commit: `lesson_45: запускаем django сервер`**
+
+3. Создание приложения `python manage.py startapp cards`
+После создания приложения, вам нужно зарегистрировать его в файле `settings.py` в разделе `INSTALLED_APPS`
+
+**commit: `lesson_45: cоздаём django_app cards`**
