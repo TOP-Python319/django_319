@@ -41,3 +41,25 @@
 После создания приложения, вам нужно зарегистрировать его в файле `settings.py` в разделе `INSTALLED_APPS`
 
 **commit: `lesson_45: cоздаём django_app cards`**
+
+### Создали первое представление
+
+```python
+from django.http import HttpResponse
+
+def main(request):
+    return HttpResponse("Hello, world!")  # вернет страничку с надписью "Hello, world!"
+
+```
+
+Чтобы представление заработало, его нужно зарегистрировать в файле `urls.py` конфигурации проекта.
+
+### Создали первый URL
+
+```python
+path('', views.main),
+```
+
+Теперь, если вы перейдете на главную страницу сайта, то увидите надпись "Hello, world!"
+
+**commit: `lesson_45: создаём первый маршрут и первое представление`**
