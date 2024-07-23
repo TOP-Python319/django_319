@@ -23,6 +23,6 @@ from cards import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.main),
-    path('info/', views.about),
+    path('about/', views.about),
     path('cards/', include('cards.urls')),
 ]

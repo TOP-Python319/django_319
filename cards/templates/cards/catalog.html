@@ -12,10 +12,17 @@
         <nav>
             <ul>
                 {% for item in menu %}
-                    <li>{{ item }}</li>
+                    <li>
+                        <!-- Добавляем ссылки в меню -->
+                        <a href="{{ item.url }}">
+                            {{ item.title }}
+                        </a>
+                    </li>
+                    <!-- Добавляем разделитель между элементами меню кроме последнего элемента-->
                     {% if not forloop.last %}
                         <hr>
-                    {% endif %}                
+                    {% endif %}
+
                 {% endfor %}
             </ul>
         </nav>
