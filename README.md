@@ -91,3 +91,12 @@ def card_by_id(request, card_id):
 5. Удалили маршруты `cards/` из файла `urls.py` конфигурации проекта
 
 **commit: `lesson_46: собственный urls.py в cards и функция include`**
+
+### Знакомство с Django Templates (Шаблоны)
+
+1. Создали папку `templates` в директории приложения `cards`
+2. Создали файл `catalog.html` в директории `templates/cards`
+3. Переписали функцию `get_all_cards` в файле `views.py` так, чтобы она возвращала страницу `catalog.html`
+используя функцию `render` из модуля `django.shortcuts`
+
+**commit: `lesson_46: рендер первого шаблона`**

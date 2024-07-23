@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def main(request):
@@ -10,7 +11,7 @@ def info(request):
 
 
 def get_all_cards(request):
-    return HttpResponse('Все карточки')  # Вернёт страницу с надписью "Все карточки"
+    return render(request, 'cards/catalog.html')
 
 
 def get_card_by_id(request, card_id):
