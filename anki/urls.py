@@ -22,7 +22,7 @@ from cards import views
 # Подключаем файл urls.py из приложения cards через include
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.main),
-    path('about/', views.about),
+    # path('', views.main),
+    # path('about/', views.about),
     path('cards/', include('cards.urls')),
 ]
