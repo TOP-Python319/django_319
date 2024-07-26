@@ -30,6 +30,14 @@ def about(request):
     return HttpResponse('info')
 
 
+def catalog(request):
+    return HttpResponse('Каталог карточек')
+
+
+def get_category_by_name(request, slug):
+    return HttpResponse(f"Категория {slug}")
+
+
 def get_all_cards(request):
     """
     Принимает информацию о проекте (словарь info)
@@ -38,6 +46,4 @@ def get_all_cards(request):
 
 
 def get_card_by_id(request, card_id):
-    if card_id > 10:
-        return HttpResponse('Такой карточки нет', status=404)
     return HttpResponse(f'Карточка {card_id}')  # Вернёт страницу с надписью "Вы открыли карточку {card_id}"
