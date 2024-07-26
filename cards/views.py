@@ -10,6 +10,13 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 
+def main(request):
+    """
+    Представление рендерит шаблон base.html
+    """
+    return render(request, 'base.html')
+
+
 def get_all_cards(request):
     """
     Возвращает все карточки для представления в каталоге
