@@ -211,3 +211,10 @@ info = {
 - Обновили функцию `get_detail_card_by_id` - сделали поиск карточки по ID в словаре и возврат шаблона `card_detail.html` ИЛИ `404`
 
 **commit: `lesson_48: доделали каталог карточек и детальное отображение карточки по ID`**
+
+### Собственные шаблонные теги через `simple_tag`
+- Создали тег шаблона `markdown_to_html` через `simple_tag` в файле `cards/templatetags/markdown_to_html.py`
+- Протестировали его в представлении `card_detail` в шаблоне `card_detail.html`
+- После создания тега и регистрации с помощью `template.Library()` нужно перезапустить сервер
+
+**commit: `lesson_48: создал собственный тег шаблона markdown_to_html через simple_tag`**
