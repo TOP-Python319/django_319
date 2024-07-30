@@ -10,4 +10,11 @@
   <h1>Каталог карточек Anki для интервального повторения</h1>
   <p>Всего карточек: {{ cards_count }}</p>
   <p>Всего пользователей: {{ users_count }}</p>
+    <ul>
+        {% for card in cards %}
+            <li>
+                {% include "include/card_preview.html" %}
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
