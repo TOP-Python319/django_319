@@ -265,3 +265,10 @@ info = {
 - Проверили вручную, что таблица `Cards` действительно создалась
 
 **commit: `lesson_49: создали первую модель`**
+
+### Знакомство с `Shell Plus` и работа с моделью `Card` в интерактивной оболочке Django
+- Установка `Shell Plus` командой `pip install django-extensions`
+- Добавление `django_extensions` в `INSTALLED_APPS` в файле `settings.py`
+- Запуск `Shell Plus` командой `python manage.py shell_plus` (для отображения SQL запросов в консоли - `python manage.py shell_plus --print-sql`)
+
+**commit: `lesson_49: установка Shell Plus и подготовка ORM`**
