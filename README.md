@@ -321,3 +321,22 @@ card.delete()
 ```
 
 **commit: `lesson_49: базовые CRUD Операции с моделью Card`**
+
+### Подключение модели `Card` в административной панели
+- Создали файл `admin.py` в приложении `cards` (если его нет)
+- Зарегистрировали модель `Card` в административной панели
+- `settings.py` `LANGUAGE_CODE = 'ru-ru'` - для русского языка в админке
+
+```python
+from django.contrib import admin
+from .models import Card
+
+class CardAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Card, CardAdmin)
+```
+
+- создаем суперпользователя если он ещё не был создан `python manage.py createsuperuser`
+- 
+**commit: `lesson_49: подключили модель Card в административной панели`**
