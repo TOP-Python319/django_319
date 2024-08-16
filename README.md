@@ -400,3 +400,10 @@ Card.objects.exclude(views__lte=9).count()
 - добавил примеры для настройки отображения админки в `cards/admin.py`
 
 **commit: `lesson_50: добавил примеры для настройки отображения админки`**
+
+### Добавили теги в модель `Card`
+- Добавили поле `tags` в модель `Card`
+- Создали миграцию командой `python manage.py makemigrations`
+- Применили миграцию командой `python manage.py migrate`
+
+**commit: `lesson_50: добавили теги в модель Card`**

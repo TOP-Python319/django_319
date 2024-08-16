@@ -154,6 +154,9 @@ def get_detail_card_by_id(request, card_id):
     # получим карточку по id
     card = Card.objects.get(pk=card_id)
 
+    # Проверили, что Django ORM преобрзуе JSON в список
+    # card.tags = '["Django", "Python", "ORM"]'
+
     context = {
         'card': card,
         'menu': info['menu']
