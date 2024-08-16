@@ -151,15 +151,12 @@ def get_detail_card_by_id(request, card_id):
     """
     Возвращает детальную информацию по карточке для представления
     """
-    card = None
+    # получим карточку по id
+    card = Card.objects.get(pk=card_id)
 
-    for c in cards_dataset:
-        if c['id_card'] == card_id:
-            card = c
-            break
+    context = {
+        'card': card,
+        'menu': info['menu']
+    }
 
-    info['card'] = card
-
-    if card:
-        return render(request, 'cards/card_detail.html', context=info)
-    return HttpResponse('Карточка не найдена', status=404)
+    return render(request, 'cards/card_detail.html', context=context)
