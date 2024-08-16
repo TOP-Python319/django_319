@@ -1,4 +1,25 @@
-/* добавим всем h1 и красный фон */
-h1 {
-    background-color: green;
+body {
+    background-color: #f3f4f2;
+}
+
+.copyright {
+    color: #cbc1c1;
+    font-family: monospace;
+}
+
+body, html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    flex-shrink: 0;
 }
