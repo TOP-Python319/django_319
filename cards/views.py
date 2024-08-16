@@ -11,7 +11,7 @@ render(запрос, шаблон, контекст=None)
     Возвращает объект HttpResponse с отрендеренным шаблоном шаблон и контекстом контекст.
     Если контекст не передан, используется пустой словарь.
 """
-
+from django.db.models import F
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.context_processors import request
@@ -173,11 +173,14 @@ def get_detail_card_by_id(request, card_id):
     """
     Возвращает детальную информацию по карточке для представления
     """
-    # получим карточку по id
+    # если в БД нет карточки с таким id, то возвращаем 404
     card = get_object_or_404(Card, id=card_id)
 
-    # Проверили, что Django ORM преобрзуе JSON в список
-    # card.tags = '["Django", "Python", "ORM"]'
+    # Обновляем счётчик просмотров по карточке
+    card.views = F('views') + 1
+    card.save()
+
+    card.refresh_from_db()  # обновляем карточку в БД
 
     context = {
         'card': card,
