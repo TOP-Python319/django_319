@@ -15,6 +15,7 @@ render(запрос, шаблон, контекст=None)
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template.context_processors import request
+from .models import Card
 
 """
 Информация в шаблоны будет браться из базы данных
@@ -110,7 +111,18 @@ def about(request):
 def catalog(request):
     """Функция для отображения страницы "Каталог"
     будет возвращать рендер шаблона /templates/cards/catalog.html"""
-    return render(request, 'cards/catalog.html', info)
+
+    # Получим ВСЕ карточки для представления в каталоге
+    cards = Card.objects.all()
+
+    # Подготовим контекст для шаблона
+    context = {
+        'cards': cards,
+        'cards_count': cards.count(),
+        'menu': info['menu']
+    }
+
+    return render(request, 'cards/catalog.html', context)
 
 
 def get_categories(request):
