@@ -420,3 +420,7 @@ Card.objects.exclude(views__lte=9).count()
 4. Сортировка по дате добавления в возрастающем порядке: `/cards/catalog/?sort=upload_date&order=asc`
 
 **commit: `lesson_50: сделали сортировку для каталога`**
+
+### `get_object_or_404` для детального отображения карточки по ID
+
+**commit: `lesson_50: get_object_or_404 для детального отображения карточки по ID`**

@@ -13,7 +13,7 @@ render(запрос, шаблон, контекст=None)
 """
 
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.template.context_processors import request
 from .models import Card
 
@@ -174,7 +174,7 @@ def get_detail_card_by_id(request, card_id):
     Возвращает детальную информацию по карточке для представления
     """
     # получим карточку по id
-    card = Card.objects.get(pk=card_id)
+    card = get_object_or_404(Card, id=card_id)
 
     # Проверили, что Django ORM преобрзуе JSON в список
     # card.tags = '["Django", "Python", "ORM"]'
