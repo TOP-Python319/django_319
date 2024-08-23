@@ -16,6 +16,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.template.context_processors import request
 from .models import Card
+from django.views.decorators.cache import cache_page
 
 """
 Информация в шаблоны будет браться из базы данных
@@ -108,6 +109,7 @@ def about(request):
     return render(request, 'about.html', info)
 
 
+@cache_page(60 * 15)
 def catalog(request):
     """Функция для отображения страницы "Каталог"
     будет возвращать рендер шаблона /templates/cards/catalog.html
