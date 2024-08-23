@@ -134,13 +134,13 @@ def catalog(request):
     else:
         order_by = f'-{sort}'
 
-    # Получим ВСЕ карточки для представления в каталоге
-    cards = Card.objects.all().order_by(order_by)
+    # Получим ВСЕ карточки для представления в каталоге в ЖАДНОМ РЕЖИМЕ
+    cards = Card.objects.select_related('category').prefetch_related('tags').order_by(order_by)
 
     # Подготовим контекст для шаблона
     context = {
         'cards': cards,
-        'cards_count': cards.count(),
+        'cards_count': len(cards),
         'menu': info['menu']
     }
 
