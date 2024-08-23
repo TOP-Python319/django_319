@@ -109,7 +109,7 @@ def about(request):
     return render(request, 'about.html', info)
 
 
-@cache_page(60 * 15)
+# @cache_page(60 * 15)
 def catalog(request):
     """Функция для отображения страницы "Каталог"
     будет возвращать рендер шаблона /templates/cards/catalog.html
