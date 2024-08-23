@@ -3,6 +3,7 @@ anki/urls.py
 """
 from django.contrib import admin
 from django.urls import path, include
+from anki import settings
 from cards import views
 
 
@@ -16,3 +17,10 @@ urlpatterns = [
     # Маршруты подключенные из приложения cards
     path('cards/', include('cards.urls')),
 ]
+
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
