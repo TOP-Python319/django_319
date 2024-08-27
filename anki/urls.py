@@ -7,6 +7,11 @@ from anki import settings
 from cards import views
 
 
+admin.site.site_header = 'Административная панель проекта ANKI'  # текст в шапке админ. панели
+admin.site.site_title = 'Управление карточками ANKI'  # текст в заголовке браузера или вкладки админ. панели
+admin.site.index_title = 'Добро пожаловать!'  # текст на главной странице админ. панели
+
+
 # Подключаем файл urls.py из приложения cards через include
 urlpatterns = [
     # Админка
