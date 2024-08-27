@@ -2,6 +2,10 @@ from django.db import models
 
 
 class Card(models.Model):
+    class Status(models.IntegerChoices):
+        UNCHECKED = 0, 'не проверно'
+        CHECKED = 1, 'проверено'
+
     id = models.AutoField(primary_key=True, db_column='CardID')
     question = models.CharField(max_length=255, db_column='Question', verbose_name='Вопрос')
     answer = models.TextField(max_length=5000, db_column='Answer', verbose_name='Ответ')
@@ -10,6 +14,7 @@ class Card(models.Model):
     views = models.IntegerField(default=0, db_column='Views', verbose_name='Просмотры')
     adds = models.IntegerField(default=0, db_column='Favorites', verbose_name='Добавления в избранное')
     tags = models.ManyToManyField('Tag', through='CardTag', related_name='cards', verbose_name='Теги')
+    status = models.BooleanField(default=0, choices=(map(lambda x: (bool(x[0]), x[1]), Status.choices)), verbose_name='Проверено')
 
     class Meta:
         db_table = 'Cards'  # без указания этого параметра, таблица в БД будет называться вида 'cards_card'
