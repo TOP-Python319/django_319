@@ -3,13 +3,13 @@ from django.db import models
 
 class Card(models.Model):
     id = models.AutoField(primary_key=True, db_column='CardID')
-    question = models.CharField(max_length=255, db_column='Question')
-    answer = models.TextField(max_length=5000, db_column='Answer')
-    category = models.ForeignKey('Category', on_delete=models.CASCADE, db_column='CategoryID')
-    upload_date = models.DateTimeField(auto_now_add=True, db_column='UploadDate')
-    views = models.IntegerField(default=0, db_column='Views')
-    adds = models.IntegerField(default=0, db_column='Favorites')
-    tags = models.ManyToManyField('Tag', through='CardTag', related_name='cards')
+    question = models.CharField(max_length=255, db_column='Question', verbose_name='Вопрос')
+    answer = models.TextField(max_length=5000, db_column='Answer', verbose_name='Ответ')
+    category = models.ForeignKey('Category', on_delete=models.CASCADE, db_column='CategoryID', verbose_name='Категория')
+    upload_date = models.DateTimeField(auto_now_add=True, db_column='UploadDate', verbose_name='Дата загрузки')
+    views = models.IntegerField(default=0, db_column='Views', verbose_name='Просмотры')
+    adds = models.IntegerField(default=0, db_column='Favorites', verbose_name='Добавления в избранное')
+    tags = models.ManyToManyField('Tag', through='CardTag', related_name='cards', verbose_name='Теги')
 
     class Meta:
         db_table = 'Cards'  # без указания этого параметра, таблица в БД будет называться вида 'cards_card'
