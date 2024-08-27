@@ -1,5 +1,24 @@
 from django.contrib import admin
 from .models import Card
+from django.contrib.admin import SimpleListFilter
+
+
+class CardCodeFilter(SimpleListFilter):
+    title = 'Наличие кода'
+    parameter_name = 'has_code'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', 'Есть'),
+            ('no', 'Нет'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(answer__contains='```')
+        if self.value() == 'no':
+            return queryset.exclude(answer__contains='```')
+        return queryset
 
 
 @admin.register(Card)
@@ -14,7 +33,7 @@ class CardAdmin(admin.ModelAdmin):
     search_fields = ('answer',)  # не забываем поставить запятую в конце, если у нас только одно значение, что показать Python, что это кортеж
 
     # поля, по которым можно фильтровать
-    list_filter = ('category', 'status',)
+    list_filter = ('category', 'status', CardCodeFilter)
 
     # сортировка по умолчанию по какому полю и в каком направлении
     ordering = ('category', '-views',)
@@ -40,4 +59,4 @@ class CardAdmin(admin.ModelAdmin):
     @admin.action(description='Отметить карточку как не проверенную')
     def set_unchecked(self, request, queryset):
         updated = queryset.update(status=Card.Status.UNCHECKED)
-        self.message_user(request, f'{updated} карточек было отмечено как не проверенные')
+        self.message_user(request, f'{updated} карточек было отмечено как не проверенные', 'warning')
