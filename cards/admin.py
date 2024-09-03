@@ -24,7 +24,7 @@ class CardCodeFilter(SimpleListFilter):
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
     # поля, которые будут отображаться в админке
-    list_display = ('pk', 'question', 'category', 'views', 'upload_date', 'status', 'has_code')
+    list_display = ('pk', 'question', 'category', 'views', 'upload_date', 'status', 'has_code',)
 
     # поля, которые будут ссылками
     list_display_links = ('pk', 'category',)
@@ -48,6 +48,8 @@ class CardAdmin(admin.ModelAdmin):
     actions = ('set_checked', 'set_unchecked')
 
     change_form_template = 'admin/cards/card_change_form.html'
+
+    fields = (('question', 'answer'), ('views', 'adds'),)
 
     @admin.display(description='Наличие кода')
     def has_code(self, card):
