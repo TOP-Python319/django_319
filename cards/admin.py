@@ -47,6 +47,8 @@ class CardAdmin(admin.ModelAdmin):
     # действия с карточками
     actions = ('set_checked', 'set_unchecked')
 
+    change_form_template = 'admin/cards/card_change_form.html'
+
     @admin.display(description='Наличие кода')
     def has_code(self, card):
         return 'Да' if '```' in card.answer else 'Нет'

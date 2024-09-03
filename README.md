@@ -686,3 +686,11 @@ _нам нужно было ограничить значения поля `stat
 - Добавил `jazzmin` в `INSTALLED_APPS` в файле `settings.py`
 
 **commit: `lesson_53: установил и настроил django-jazzmin`**
+
+
+## Lesson 54
+
+- Сделал копию служебного шаблона `change_form.html` и вклинились в `{% block after_field_sets %}`
+- Добавил в админке карточек кнопку "Создать карточку с тегами" `{% block object-tools-items %}`
+
+**commit: `lesson_54: кастомизация шаблона change_form.html`**
