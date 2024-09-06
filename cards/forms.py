@@ -5,7 +5,13 @@ import re
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import Category
+from .models import Category, Card, Tag
+
+
+class TagsStringValidator:
+    def __call__(self, value):
+        if ' ' in value:
+            raise ValidationError('Теги не могут содержать пробелы')
 
 
 class CodeBlockValidator:
@@ -51,25 +57,19 @@ class CodeBlockValidator:
         if language_name_end == -1 or language_name_end - content_start < 2:
             raise ValidationError("Добавьте название языка программирования после открывающих ```")
 
-        # Проверяем, есть ли перенос строки после названия языка
-        if block[language_name_end + 1] != '\n':
-            raise ValidationError("Проверьте, что нет пробелов перед открытием блока кода, и есть перенос строки после названия языка.")
+        # # Проверяем, есть ли перенос строки после названия языка
+        # if block[language_name_end + 1] != '\n':
+        #     raise ValidationError("Проверьте, что нет пробелов перед открытием блока кода, и есть перенос строки после названия языка.")
 
         # Проверяем, нет ли пробелов перед закрывающими ```
         if block[closing_tick_index - 1] == ' ':
             raise ValidationError("Уберите пробел перед закрывающими ```")
 
 
-
-class CardForm(forms.Form):
-    question = forms.CharField(
-        label='Вопрос',
-        max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-    )
+class CardForm(forms.ModelForm):
     answer = forms.CharField(
-        label='Ответ',
         widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'cols': 40}),
+        label='Ответ',
         max_length=5000,
         validators=[CodeBlockValidator()]
     )
@@ -79,3 +79,47 @@ class CardForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-control'}),
         empty_label='Категория не выбрана',
     )
+    tags = forms.CharField(
+        label='Теги',
+        help_text='Укажите теги через запятую, без пробелов',
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        validators=[TagsStringValidator()]
+    )
+
+    class Meta:
+        # модель, к которой будет относиться форма
+        model = Card
+        # поля, которые будут отображаться в форме
+        fields = ['question', 'answer', 'category', 'tags']
+
+        # виджеты для полей
+        widgets = {
+            'question': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+        # метки для полей (в нашем случае, названия полей взялись из модели данных Card, атрибут verbose_name)
+        labels = {
+            'question': 'Вопрос',
+            'answer': 'Ответ',
+            'category': 'Категория',
+            'tags': 'Теги',
+        }
+
+    def clean_tags(self):
+        # преобразование строки тегов в список тегов
+        tags_str = self.cleaned_data['tags'].lower()
+        tag_list = [tag.strip() for tag in tags_str.split(',') if tag.strip()]
+        return tag_list
+
+    # !!!!!!! пояснить подробнее про метод save и про commit=False
+    def save(self, *args, **kwargs):
+        # сохранение карточки с тегами
+        instance = super().save(commit=False)
+        instance.save()  # сначала сохраняем карточку чтобы получить её id
+
+        # Обрабатываем теги
+        for tag_name in self.cleaned_data['tags']:
+            tag, created = Tag.objects.get_or_create(name=tag_name)
+            instance.tags.add(tag)
+
+        return instance
