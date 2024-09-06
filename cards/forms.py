@@ -123,3 +123,11 @@ class CardForm(forms.ModelForm):
             instance.tags.add(tag)
 
         return instance
+
+
+class UploadFileForm(forms.Form):
+    # определяем поле для загрузки файла
+    file = forms.FileField(
+        label='Выберите файл',
+        widget=forms.FileInput(attrs={'class': 'form-control'})
+    )
