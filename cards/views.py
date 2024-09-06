@@ -174,7 +174,19 @@ def add_card(request):
     if request.method == "POST":
         form = CardForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect('/')
+            question = form.cleaned_data['question']
+            answer = form.cleaned_data['answer']
+            category = form.cleaned_data['category']
+
+            # Сохраняем карточку в БД
+            card = Card(question=question, answer=answer, category=category)
+            card.save()
+
+            # Получаем id созданной карточки
+            card_id = card.id
+
+            # Перенаправляем пользователя на страницу карточки
+            return HttpResponseRedirect(f'/cards/{card_id}/detail/')
     else:
         form = CardForm()
 
