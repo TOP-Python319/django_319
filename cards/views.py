@@ -1,5 +1,6 @@
 import os
 
+from django.core.paginator import Paginator
 from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -56,7 +57,7 @@ def catalog(request):
     sort = request.GET.get('sort', 'upload_date')  # по умолчанию сортируем по дате загрузки
     order = request.GET.get('order', 'desc')  # по умолчанию сортируем по убыванию
     search_query = request.GET.get('search_query', '')  # поиск по карточкам
-    page_number = None
+    page_number = request.GET.get('page', 1)
 
     # Проверяем дали ли мы разрешение на сортировку по этому полю
     valid_sort_fields = {'upload_date', 'views', 'adds'}
@@ -111,12 +112,20 @@ def catalog(request):
             order_by(order_by).\
             distinct()
 
+    # создаём объект пагинанатора и устанавалиавем кол-во элементов на странице
+    paginator = Paginator(cards, 25)
+
+    # получаем нужную страницу
+    page_obj = paginator.get_page(page_number)
 
     # Подготовим контекст для шаблона
     context = {
         'cards': cards,
         'cards_count': len(cards),
-        'menu': info['menu']
+        'menu': info['menu'],
+        'page_obj': page_obj,
+        'sort': sort,
+        'order': order,
     }
 
     response = render(request, 'cards/catalog.html', context)
