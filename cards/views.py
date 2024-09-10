@@ -1,19 +1,6 @@
-"""
-cards/views.py
-index - возвращает главную страницу - шаблон /templates/cards/main.html
-about - возвращает страницу "О проекте" - шаблон /templates/cards/about.html
-catalog - возвращает страницу "Каталог" - шаблон /templates/cards/catalog.html
-get_categories - возвращает все категории для представления в каталоге
-get_cards_by_category - возвращает карточки по категории для представления в каталоге
-get_cards_by_tag - возвращает карточки по тегу для представления в каталоге
-get_detail_card_by_id - возвращает детальную информацию по карточке для представления
-render(запрос, шаблон, контекст=None)
-    Возвращает объект HttpResponse с отрендеренным шаблоном шаблон и контекстом контекст.
-    Если контекст не передан, используется пустой словарь.
-"""
 import os
 
-from django.db.models import F
+from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
@@ -68,9 +55,13 @@ def catalog(request):
     # считаем параметры из GET-запроса
     sort = request.GET.get('sort', 'upload_date')  # по умолчанию сортируем по дате загрузки
     order = request.GET.get('order', 'desc')  # по умолчанию сортируем по убыванию
+    search_query = request.GET.get('search_query', '')  # поиск по карточкам
+    page_number = None
 
     # Проверяем дали ли мы разрешение на сортировку по этому полю
     valid_sort_fields = {'upload_date', 'views', 'adds'}
+
+    # Обрабатываем сортировку
     if sort not in valid_sort_fields:
         sort = 'upload_date'
 
@@ -80,14 +71,46 @@ def catalog(request):
     else:
         order_by = f'-{sort}'
 
-    # Получим ВСЕ карточки для представления в каталоге в ЖАДНОМ РЕЖИМЕ
-    # `select_related` используется для оптимизации запросов,
-    # когда необходимо получить связанные объекты через "один ко многим" или "один к одному" отношения.
-    # Это уменьшает количество запросов к базе данных, выполняя более сложный запрос с JOIN'ами, но возвращая все необходимые данные за один запрос.
-    # `prefetch_related` применяется в случаях, когда связи "многие ко многим" или обратные связи "один ко многим" присутствуют.
-    # В отличие от `select_related`, `prefetch_related` выполняет отдельный запрос для каждой связи, но затем объединяет результаты в Python,
-    # что может существенно сократить время выполнения запроса при работе с большими объемами данных.
-    cards = Card.objects.select_related('category').prefetch_related('tags').order_by(order_by)
+    # Обрабатываем поиск
+    if not search_query:
+        # Получим ВСЕ карточки для представления в каталоге в ЖАДНОМ РЕЖИМЕ
+        # `select_related` используется для оптимизации запросов,
+        # когда необходимо получить связанные объекты через "один ко многим" или "один к одному" отношения.
+        # Это уменьшает количество запросов к базе данных, выполняя более сложный запрос с JOIN'ами, но возвращая все необходимые данные за один запрос.
+        # `prefetch_related` применяется в случаях, когда связи "многие ко многим" или обратные связи "один ко многим" присутствуют.
+        # В отличие от `select_related`, `prefetch_related` выполняет отдельный запрос для каждой связи, но затем объединяет результаты в Python,
+        # что может существенно сократить время выполнения запроса при работе с большими объемами данных.
+        cards = Card.objects.select_related('category').prefetch_related('tags').order_by(order_by)
+    else:
+        # пробуем получить карточки по поиску в ЛЕНИВОМ РЕЖИМЕ
+        # cards = Card.objects.filter(question__icontains=search_query).order_by(order_by)
+
+        # возвращаем ЖАДНЫЙ РЕЖИМ
+        # cards = Card.objects.\
+        #     filter(question__icontains=search_query).\
+        #     prefetch_related('tags').\
+        #     select_related('category').\
+        #     order_by(order_by)
+
+        # добавляем поиск по ответам
+        # cards = Card.objects.\
+        #     filter(Q(question__icontains=search_query) | Q(answer__icontains=search_query)).\
+        #     prefetch_related('tags').\
+        #     select_related('category').\
+        #     order_by(order_by)
+
+        # добавляем поиск по тегам
+        cards = Card.objects.\
+            filter(
+                Q(question__icontains=search_query) |
+                Q(answer__icontains=search_query) |
+                Q(tags__name__icontains=search_query)
+            ).\
+            prefetch_related('tags').\
+            select_related('category').\
+            order_by(order_by).\
+            distinct()
+
 
     # Подготовим контекст для шаблона
     context = {
@@ -96,7 +119,13 @@ def catalog(request):
         'menu': info['menu']
     }
 
-    return render(request, 'cards/catalog.html', context)
+    response = render(request, 'cards/catalog.html', context)
+
+    # теперь браузер заново загружает страницу при нажатии кнопки НАЗАД в браузере
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate'  # кэш не используется
+    response['Expires'] = 0  # перестраховка, кэш устаревает через 0 секунд
+
+    return response
 
 
 def get_categories(request):
