@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.views import View
 from django.views.decorators.cache import cache_page
+from django.views.generic import TemplateView
 
 from .forms import CardForm, UploadFileForm
 from .models import Card
@@ -30,16 +31,24 @@ info = {
 }
 
 
-def index(request):
-    """Функция для отображения главной страницы
-    будет возвращать рендер шаблона root/templates/main.html"""
-    return render(request, "main.html", info)
+class MenuMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu'] = info['menu']
+        return context
 
 
-def about(request):
-    """Функция для отображения страницы "О проекте"
-    будет возвращать рендер шаблона /root/templates/about.html"""
-    return render(request, 'about.html', info)
+class IndexView(MenuMixin, TemplateView):
+    template_name = 'main.html'
+
+
+class AboutView(TemplateView):
+    template_name = 'about.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['menu'] = info['menu']
+        return context
 
 
 # @cache_page(60 * 15)
