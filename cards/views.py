@@ -1,6 +1,7 @@
 import os
 
 from django.core.paginator import Paginator
+from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -40,15 +41,19 @@ class MenuMixin:
 
 class IndexView(MenuMixin, TemplateView):
     template_name = 'main.html'
+    UserModel = get_user_model()
+    extra_context = {
+        'users_count': UserModel.objects.count(),
+    }
 
 
-class AboutView(TemplateView):
+class AboutView(MenuMixin, TemplateView):
     template_name = 'about.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['menu'] = info['menu']
-        return context
+    UserModel = get_user_model()
+    extra_context = {
+        'users_count': UserModel.objects.count(),
+        'cards_count': Card.objects.count(),
+    }
 
 
 # @cache_page(60 * 15)
