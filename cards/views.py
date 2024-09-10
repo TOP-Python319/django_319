@@ -5,6 +5,7 @@ from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
+from django.views import View
 from django.views.decorators.cache import cache_page
 
 from .forms import CardForm, UploadFileForm
@@ -209,25 +210,48 @@ def preview_card_ajax(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-def add_card(request):
-    if request.method == "POST":
+# def add_card(request):
+#     if request.method == "POST":
+#         form = CardForm(request.POST)
+#         if form.is_valid():
+
+#             # Сохраняем карточку в БД
+#             card = form.save()
+
+#             # Перенаправляем пользователя на страницу карточки
+#             return redirect(card.get_absolute_url())
+#     else:
+#         form = CardForm()
+
+#     context = {
+#         'form': form,
+#         'menu': info['menu']
+#     }
+
+#     return render(request, 'cards/add_card.html', context=context)
+
+class AddCardView(View):
+
+    """Обработка GET-запроса для добавления карточки
+    """
+    def get(self, request):
+        form = CardForm()
+        return render(request, 'cards/add_card.html', {'form': form})
+
+
+    """Обработка POST-запроса для добавления карточки
+    если форма валидна, то сохраняем карточку в БД
+    иначе отображаем форму с ошибками
+    """
+    def post(self, request):
         form = CardForm(request.POST)
         if form.is_valid():
-
             # Сохраняем карточку в БД
             card = form.save()
 
             # Перенаправляем пользователя на страницу карточки
             return redirect(card.get_absolute_url())
-    else:
-        form = CardForm()
-
-    context = {
-        'form': form,
-        'menu': info['menu']
-    }
-
-    return render(request, 'cards/add_card.html', context=context)
+        return render(request, 'cards/add_card.html', {'form': form})
 
 
 def handle_uploaded_file(f):
