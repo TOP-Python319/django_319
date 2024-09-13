@@ -1,6 +1,8 @@
 """
 anki/urls.py
 """
+from django.views.decorators.cache import cache_page
+
 from django.contrib import admin
 from django.urls import path, include
 from anki import settings
@@ -17,8 +19,8 @@ urlpatterns = [
     # Админка
     path('admin/', admin.site.urls),
     # Маршруты для меню
-    path('', views.IndexView.as_view(), name='index'),
-    path('about/', views.AboutView.as_view(), name='about'),
+    path('', cache_page(60 * 15)(views.IndexView.as_view()), name='index'),
+    path('about/', cache_page(60 * 15)(views.AboutView.as_view()), name='about'),
     # Маршруты подключенные из приложения cards
     path('cards/', include('cards.urls')),
 ]

@@ -1,6 +1,7 @@
 <!-- cards/templates/cards/catalog.html -->
 <!-- Использует шаблон cards/templates/cards/include/card_preview.html -->
 {% extends "base.html" %}
+{% load cache %}
 
 {% block head %}
     <style>
@@ -37,18 +38,24 @@
             <nav aria-label="Page navigation" class="text-dark">
                 <ul class="pagination pagination-dark">
                   {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link text-white bg-secondary" href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&order={{ order }}">Предыдущая</a></li>
+                    <li class="page-item">
+                      <a 
+                        class="page-link text-white bg-secondary"
+                        href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&order={{ order }}&search_query={{ search_query }}">Предыдущая</a>
+                    </li>
                   {% endif %}
 
                   {% for num in page_obj.paginator.page_range %}
                     <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                    <a class="page-link text-white bg-secondary" href="?page={{ num }}&sort={{ sort }}&order={{ order }}">{{ num }}</a>
+                      <a class="page-link text-white bg-secondary"
+                         href="?page={{ num }}&sort={{ sort }}&order={{ order }}&search_query={{ search_query }}">{{ num }}</a>
                     </li>
                   {% endfor %}
 
                   {% if page_obj.has_next %}
                     <li class="page-item">
-                      <a class="page-link text-white bg-secondary" href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&order={{ order }}">Следующая</a>
+                      <a class="page-link text-white bg-secondary"
+                         href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&order={{ order }}&search_query={{ search_query }}">Следующая</a>
                     </li>
                   {% endif %}
                 </ul>
@@ -112,10 +119,17 @@
 
 
 <p>Здесь вы можете выбрать карточки для изучения</p>
-<p>На текущий момент, у нас карточек: {{cards_count}} и пользователей: {{users_count}} </p>
-{% for card in cards %}
-    {% include "cards/include/card_preview.html" %}
-{% endfor %}
+{% comment %}
+  Мы обращаемся к атрибуту paginator объекта page_obj, чтобы получить общее количество карточек в каталоге.
+  Они уже рассчитаны.
+  Новых запросов не будет.
+{% endcomment %}
+<p>Всего карточек в каталоге: {{ page_obj.paginator.count }}</p>
+{% cache 90 catalog_content page_obj.number sort order search_query %}
+  {% for card in cards %}
+      {% include "cards/include/card_preview.html" %}
+  {% endfor %}
+{% endcache %}
 </div>
 </div>
 </div>
