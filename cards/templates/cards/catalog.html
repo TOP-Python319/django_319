@@ -41,7 +41,7 @@
                     <li class="page-item">
                       <a 
                         class="page-link text-white bg-secondary"
-                        href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&order={{ order }}&search_query={{ search_query }}">Предыдущая</a>
+                        href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&order={{ order }}&search_query={{ search_query }}"><i class="bi bi-chevron-left"></i></a>
                     </li>
                   {% endif %}
 
@@ -55,7 +55,7 @@
                   {% if page_obj.has_next %}
                     <li class="page-item">
                       <a class="page-link text-white bg-secondary"
-                         href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&order={{ order }}&search_query={{ search_query }}">Следующая</a>
+                         href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&order={{ order }}&search_query={{ search_query }}"><i class="bi bi-chevron-right"></i></a>
                     </li>
                   {% endif %}
                 </ul>

@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.views import View
 from django.views.decorators.cache import cache_page
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.views.generic.list import ListView
 
 from .forms import CardForm, UploadFileForm
@@ -87,7 +87,7 @@ class CatalogView(MenuMixin, ListView):
         context['sort'] = self.request.GET.get('sort', 'upload_date')
         context['order'] = self.request.GET.get('order', 'desc')
         context['search_query'] = self.request.GET.get('search_query', '')
-      
+
         return context
 
 
@@ -121,25 +121,16 @@ def get_cards_by_tag(request, tag_id):
     return render(request, 'cards/catalog.html', context=context)
 
 
-def get_detail_card_by_id(request, card_id):
-    """
-    Возвращает детальную информацию по карточке для представления
-    """
-    # если в БД нет карточки с таким id, то возвращаем 404
-    card = get_object_or_404(Card, id=card_id)
+class CardDetailView(MenuMixin, DetailView):
+    model = Card
+    template_name = 'cards/card_detail.html'
+    context_object_name = 'card'
 
-    # Обновляем счётчик просмотров по карточке
-    card.views = F('views') + 1
-    card.save()
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        Card.objects.filter(pk=obj.pk).update(views=F('views') + 1)
 
-    card.refresh_from_db()  # обновляем карточку в БД
-
-    context = {
-        'card': card,
-        'menu': info['menu']
-    }
-
-    return render(request, 'cards/card_detail.html', context=context)
+        return obj
 
 
 def preview_card_ajax(request):
