@@ -1,6 +1,7 @@
 import os
 
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -15,9 +16,6 @@ from .models import Card
 
 
 info = {
-    "users_count": 100500,
-    "cards_count": 200600,
-    # "menu": ['Главная', 'О проекте', 'Каталог']
     "menu": [
         {"title": "Главная",
          "url": "/",
@@ -33,11 +31,40 @@ info = {
 
 
 class MenuMixin:
+    """Класс-миксин для добавления меню в контекст шаблона и для кеширования cards_count, users_count и menu
+    """
+
+    timeout = 30
+
+    def get_menu(self):
+        menu = cache.get('menu')
+
+        if not menu:
+            menu = info['menu']
+            cache.set('menu', menu, self.timeout)
+        return menu
+
+    def get_cards_count(self):
+        cards_count = cache.get('cards_count')
+
+        if not cards_count:
+            cards_count = Card.objects.count()
+            cache.set('cards_count', cards_count, self.timeout)
+        return cards_count
+
+    def get_users_count(self):
+        users_count = cache.get('users_count')
+
+        if not users_count:
+            users_count = get_user_model().objects.count()
+            cache.set('users_count', users_count, self.timeout)
+        return users_count
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['menu'] = info['menu']
-        context['users_count'] = get_user_model().objects.count()
-        context['cards_count'] = Card.objects.count()
+        context['menu'] = self.get_menu()
+        context['users_count'] = self.get_users_count()
+        context['cards_count'] = self.get_cards_count()
         return context
 
 
