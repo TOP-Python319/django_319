@@ -9,7 +9,9 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView, DetailView
+from django.views.generic.edit import CreateView
 from django.views.generic.list import ListView
+from django.urls import reverse_lazy
 
 from .forms import CardForm, UploadFileForm
 from .models import Card
@@ -181,28 +183,11 @@ def preview_card_ajax(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-class AddCardView(View):
-
-    """Обработка GET-запроса для добавления карточки
-    """
-    def get(self, request):
-        form = CardForm()
-        return render(request, 'cards/add_card.html', {'form': form})
-
-
-    """Обработка POST-запроса для добавления карточки
-    если форма валидна, то сохраняем карточку в БД
-    иначе отображаем форму с ошибками
-    """
-    def post(self, request):
-        form = CardForm(request.POST)
-        if form.is_valid():
-            # Сохраняем карточку в БД
-            card = form.save()
-
-            # Перенаправляем пользователя на страницу карточки
-            return redirect(card.get_absolute_url())
-        return render(request, 'cards/add_card.html', {'form': form})
+class AddCardCreateView(CreateView):
+    model = Card
+    form_class = CardForm
+    template_name = 'cards/add_card.html'
+    success_url = reverse_lazy('catalog')
 
 
 def handle_uploaded_file(f):
