@@ -1,6 +1,5 @@
 import os
 
-from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from django.db.models import F, Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -9,6 +8,7 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
+from django.views.generic.list import ListView
 
 from .forms import CardForm, UploadFileForm
 from .models import Card
@@ -36,120 +36,61 @@ class MenuMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['menu'] = info['menu']
+        context['users_count'] = get_user_model().objects.count()
+        context['cards_count'] = Card.objects.count()
         return context
 
 
 class IndexView(MenuMixin, TemplateView):
     template_name = 'main.html'
-    UserModel = get_user_model()
-    extra_context = {
-        'users_count': UserModel.objects.count(),
-    }
 
 
 class AboutView(MenuMixin, TemplateView):
     template_name = 'about.html'
-    UserModel = get_user_model()
-    extra_context = {
-        'users_count': UserModel.objects.count(),
-        'cards_count': Card.objects.count(),
-    }
 
 
-# @cache_page(60 * 15)
-def catalog(request):
-    """Функция для отображения страницы "Каталог"
-    будет возвращать рендер шаблона /templates/cards/catalog.html
-    - **`sort`** - ключ для указания типа сортировки с возможными значениями: `date`, `views`, `adds`.
-    - **`order`** - опциональный ключ для указания направления сортировки с возможными значениями: `asc`, `desc`. По умолчанию `desc`.
-    1. Сортировка по дате добавления в убывающем порядке (по умолчанию): `/cards/catalog/`
-    2. Сортировка по количеству просмотров в убывающем порядке: `/cards/catalog/?sort=views`
-    3. Сортировка по количеству добавлений в возрастающем порядке: `/cards/catalog/?sort=adds&order=asc`
-    4. Сортировка по дате добавления в возрастающем порядке: `/cards/catalog/?sort=upload_date&order=asc`
-    """
+class CatalogView(ListView):
+    model = Card  # Указываем модель, данные которой мы хотим отобразить
+    template_name = 'cards/catalog.html'  # Путь к шаблону, который будет использоваться для отображения страницы
+    context_object_name = 'cards'  # Имя переменной контекста, которую будем использовать в шаблоне
+    paginate_by = 30  # Количество объектов на странице
 
-    # считаем параметры из GET-запроса
-    sort = request.GET.get('sort', 'upload_date')  # по умолчанию сортируем по дате загрузки
-    order = request.GET.get('order', 'desc')  # по умолчанию сортируем по убыванию
-    search_query = request.GET.get('search_query', '')  # поиск по карточкам
-    page_number = request.GET.get('page', 1)
+    # Метод для модификации начального запроса к БД
+    def get_queryset(self):
+        # Получение параметров сортировки из GET-запроса
+        sort = self.request.GET.get('sort', 'upload_date')
+        order = self.request.GET.get('order', 'desc')
+        search_query = self.request.GET.get('search_query', '')
 
-    # Проверяем дали ли мы разрешение на сортировку по этому полю
-    valid_sort_fields = {'upload_date', 'views', 'adds'}
+        # Определение направления сортировки
+        if order == 'asc':
+            order_by = sort
+        else:
+            order_by = f'-{sort}'
 
-    # Обрабатываем сортировку
-    if sort not in valid_sort_fields:
-        sort = 'upload_date'
-
-    # Обрабатываем направление сортировки
-    if order == 'asc':
-        order_by = sort
-    else:
-        order_by = f'-{sort}'
-
-    # Обрабатываем поиск
-    if not search_query:
-        # Получим ВСЕ карточки для представления в каталоге в ЖАДНОМ РЕЖИМЕ
-        # `select_related` используется для оптимизации запросов,
-        # когда необходимо получить связанные объекты через "один ко многим" или "один к одному" отношения.
-        # Это уменьшает количество запросов к базе данных, выполняя более сложный запрос с JOIN'ами, но возвращая все необходимые данные за один запрос.
-        # `prefetch_related` применяется в случаях, когда связи "многие ко многим" или обратные связи "один ко многим" присутствуют.
-        # В отличие от `select_related`, `prefetch_related` выполняет отдельный запрос для каждой связи, но затем объединяет результаты в Python,
-        # что может существенно сократить время выполнения запроса при работе с большими объемами данных.
-        cards = Card.objects.select_related('category').prefetch_related('tags').order_by(order_by)
-    else:
-        # пробуем получить карточки по поиску в ЛЕНИВОМ РЕЖИМЕ
-        # cards = Card.objects.filter(question__icontains=search_query).order_by(order_by)
-
-        # возвращаем ЖАДНЫЙ РЕЖИМ
-        # cards = Card.objects.\
-        #     filter(question__icontains=search_query).\
-        #     prefetch_related('tags').\
-        #     select_related('category').\
-        #     order_by(order_by)
-
-        # добавляем поиск по ответам
-        # cards = Card.objects.\
-        #     filter(Q(question__icontains=search_query) | Q(answer__icontains=search_query)).\
-        #     prefetch_related('tags').\
-        #     select_related('category').\
-        #     order_by(order_by)
-
-        # добавляем поиск по тегам
-        cards = Card.objects.\
-            filter(
+        # Фильтрация карточек по поисковому запросу и сортировка
+        if search_query:
+            queryset = Card.objects.filter(
                 Q(question__icontains=search_query) |
                 Q(answer__icontains=search_query) |
                 Q(tags__name__icontains=search_query)
-            ).\
-            prefetch_related('tags').\
-            select_related('category').\
-            order_by(order_by).\
-            distinct()
+            ).prefetch_related('tags').select_related('category').order_by(order_by).distinct()
+        else:
+            queryset = Card.objects.prefetch_related('tags').select_related('category').order_by(order_by)
 
-    # создаём объект пагинанатора и устанавалиавем кол-во элементов на странице
-    paginator = Paginator(cards, 25)
+        return queryset
 
-    # получаем нужную страницу
-    page_obj = paginator.get_page(page_number)
-
-    # Подготовим контекст для шаблона
-    context = {
-        'cards': cards,
-        'cards_count': len(cards),
-        'menu': info['menu'],
-        'page_obj': page_obj,
-        'sort': sort,
-        'order': order,
-    }
-
-    response = render(request, 'cards/catalog.html', context)
-
-    # теперь браузер заново загружает страницу при нажатии кнопки НАЗАД в браузере
-    response['Cache-Control'] = 'no-store, no-cache, must-revalidate'  # кэш не используется
-    response['Expires'] = 0  # перестраховка, кэш устаревает через 0 секунд
-
-    return response
+    def get_context_data(self, **kwargs):
+        # Получение существующего контекста из базового класса
+        context = super().get_context_data(**kwargs)
+        # Добавление дополнительных данных в контекст
+        context['sort'] = self.request.GET.get('sort', 'upload_date')
+        context['order'] = self.request.GET.get('order', 'desc')
+        context['search_query'] = self.request.GET.get('search_query', '')
+        # Добавление статических данных в контекст, если это необходимо
+        context['menu'] = info['menu'] # Пример добавления статических данных в контекст
+        
+        return context
 
 
 def get_categories(request):
@@ -223,26 +164,6 @@ def preview_card_ajax(request):
         return JsonResponse({'html': html_content})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-
-# def add_card(request):
-#     if request.method == "POST":
-#         form = CardForm(request.POST)
-#         if form.is_valid():
-
-#             # Сохраняем карточку в БД
-#             card = form.save()
-
-#             # Перенаправляем пользователя на страницу карточки
-#             return redirect(card.get_absolute_url())
-#     else:
-#         form = CardForm()
-
-#     context = {
-#         'form': form,
-#         'menu': info['menu']
-#     }
-
-#     return render(request, 'cards/add_card.html', context=context)
 
 class AddCardView(View):
 
