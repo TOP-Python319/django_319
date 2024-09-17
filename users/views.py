@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, reverse
 
 from .forms import LoginUserPassword
 
+
 def login_user(request):
     if request.method == 'POST':
         form = LoginUserPassword(request.POST)
@@ -13,7 +14,7 @@ def login_user(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('catalog')
+                return redirect(request.POST.get('next', 'catalog'))
     else:
         form = LoginUserPassword()
     return render(request, 'users/login.html', {'form': form})
