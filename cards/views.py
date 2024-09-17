@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView, DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 
@@ -76,6 +76,10 @@ class IndexView(MenuMixin, TemplateView):
 
 class AboutView(MenuMixin, TemplateView):
     template_name = 'about.html'
+
+
+class PageNotFoundView(MenuMixin, TemplateView):
+    template_name = '404.html'
 
 
 class CatalogView(MenuMixin, ListView):
@@ -183,11 +187,24 @@ def preview_card_ajax(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
-class AddCardCreateView(CreateView):
+class AddCardCreateView(MenuMixin, CreateView):
     model = Card
     form_class = CardForm
     template_name = 'cards/add_card.html'
     success_url = reverse_lazy('catalog')
+
+
+class EditCardUpdateView(MenuMixin, UpdateView):
+    model = Card
+    form_class = CardForm
+    template_name = 'cards/add_card.html'
+    success_url = reverse_lazy('catalog')
+
+
+class DeleteCardView(MenuMixin, DeleteView):
+    model = Card  # Указываем модель, с которой будет работать представление
+    success_url = reverse_lazy('catalog')  # URL, на который будет перенаправлен пользователь после удаления
+    template_name = 'cards/delete_card.html'  # Путь к шаблону представления, для отображения формы подтверждения удаления
 
 
 def handle_uploaded_file(f):

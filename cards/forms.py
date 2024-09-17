@@ -117,9 +117,18 @@ class CardForm(forms.ModelForm):
         instance = super().save(commit=False)
         instance.save()  # сначала сохраняем карточку чтобы получить её id
 
-        # Обрабатываем теги
-        for tag_name in self.cleaned_data['tags']:
+        # Новый функционал для редактирования карточки (старые теги и новые теги)
+        current_tags = set(self.cleaned_data['tags'])
+
+        # Новый функционал для редактирования карточки (старые теги и новые теги)
+        for tag in instance.tags.all():
+            if tag.name not in current_tags:
+                instance.tags.remove(tag)
+
+        # Добавляем новые теги
+        for tag_name in current_tags:
             tag, created = Tag.objects.get_or_create(name=tag_name)
+
             instance.tags.add(tag)
 
         return instance
