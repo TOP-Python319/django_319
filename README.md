@@ -867,3 +867,10 @@ ALLOWED_HOSTS = ['*']
 - Шаблон для `404` ошибки (работает только в боевом режиме `DEBUG=False`, не забыть прописать `ALLOWED_HOSTS=['*']` в `settings.py`)
 
 **commit: `lesson_58: UpdateView и DeleteView и 404`**
+
+### Users app
+- Создали приложение `users` с помощью команды `python manage.py startapp users`
+- Подключили приложение `users` в `INSTALLED_APPS`
+- Подготовили маршруты (`users/urls.py`) и представления(`users/views.py`) для приложения `users`
+
+**commit: `lesson_58: users app и подготовка маршрутов`**
