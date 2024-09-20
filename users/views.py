@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
@@ -20,10 +20,8 @@ class LoginUser(MenuMixin, LoginView):
         return reverse_lazy('catalog')
 
 
-def logout_user(request):
-    logout(request)
-    # перенаправляем пользователя на главную страницу, используя reverse для получения URL-адреса
-    return redirect(reverse('users:login'))
+class LogoutUser(LogoutView):
+    next_page = reverse_lazy('users:login')
 
 
 def sign_up(request):

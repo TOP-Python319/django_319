@@ -1016,3 +1016,8 @@ HTTP является основой для работы веб-приложен
 - Модифицировали `AddCardCreateView` для добавления карточки, чтобы автором был текущий пользователь
 
 **commit: `lesson_59: добавил пользователя в описание карточки`**
+
+- `class LogoutUser(LogoutView): next_page = reverse_lazy('users:login')`
+- Поправили `urls.py` для приложения `users` c использованием класса `LogoutUser`
+
+**commit: `lesson_59: LogoutUser(LogoutView)`**
