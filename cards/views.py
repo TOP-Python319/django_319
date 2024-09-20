@@ -195,6 +195,10 @@ class AddCardCreateView(LoginRequiredMixin, MenuMixin, CreateView):
     success_url = reverse_lazy('catalog')
     redirect_field_name = 'next'  # Имя параметра URL, используемого для перенаправления после успешного входа в систему
 
+    def form_valid(self, form):
+        form.instance.author = self.request.user  # Записываем текущего пользователя в качестве автора карточки перед сохранением
+        return super().form_valid(form)  # Вызываем базовый метод для сохранения формы
+
 
 class EditCardUpdateView(LoginRequiredMixin, MenuMixin, UpdateView):
     model = Card

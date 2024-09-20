@@ -1009,3 +1009,10 @@ HTTP является основой для работы веб-приложен
 - `LoginRequiredMixin` работает в связке с полем |`login_url` из защищённого представления или с параметром `LOGIN_URL` из настроек
 - 
 **commit: `lesson_59: LoginRequiredMixin и LOGIN_URL`**
+
+### Добавление пользователя в описание карточки
+- добавили автора в модель данных `Card` `author = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, related_name='cards', null=True, default=None, verbose_name=_('Автор'))`
+- Добавили пользователя в шаблоны отображения карточек
+- Модифицировали `AddCardCreateView` для добавления карточки, чтобы автором был текущий пользователь
+
+**commit: `lesson_59: добавил пользователя в описание карточки`**
