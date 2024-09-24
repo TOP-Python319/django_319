@@ -1092,3 +1092,152 @@ DNS — это невидимый герой Интернета, который 
 - Протестировали хеширование пароля (Есть!)
 
 **commit: `lesson_60: класс регистрации пользователя RegisterUser`**
+
+### Авторизация опционально через email или username
+
+- Создаем файл бэкенда аутентификации `users/authentication.py`
+- Определяем в нем собственный бэкенд
+- Подключаем его в настройках `AUTHENTICATION_BACKENDS`
+- Указываем там стандартный бэкенд `django.contrib.auth.backends.ModelBackend` и наш собственный `users.authentication.EmailAuthBackend`
+- Поправили форму входа `LoginUserForm` (подпись что вы можете войти по `email` или `username`)
+
+В файле `settings.py` Django содержится множество констант, которые настраивают различные аспекты вашего приложения. Вот некоторые из основных констант и их назначение:
+
+1. **BASE_DIR**:
+   - **Описание**: Путь к корневой директории проекта.
+   - **Пример**: `BASE_DIR = Path(__file__).resolve().parent.parent`
+
+2. **SECRET_KEY**:
+   - **Описание**: Секретный ключ, используемый для криптографических операций.
+   - **Пример**: `SECRET_KEY = 'your-secret-key'`
+
+3. **DEBUG**:
+   - **Описание**: Флаг, указывающий, включен ли режим отладки.
+   - **Пример**: `DEBUG = True`
+
+4. **ALLOWED_HOSTS**:
+   - **Описание**: Список доменных имен, которые могут обслуживать этот Django-сайт.
+   - **Пример**: `ALLOWED_HOSTS = ['localhost', '127.0.0.1']`
+
+5. **INSTALLED_APPS**:
+   - **Описание**: Список приложений, которые должны быть включены в проект.
+   - **Пример**:
+     ```python
+     INSTALLED_APPS = [
+         'django.contrib.admin',
+         'django.contrib.auth',
+         'django.contrib.contenttypes',
+         'django.contrib.sessions',
+         'django.contrib.messages',
+         'django.contrib.staticfiles',
+         'your_app_name',
+     ]
+     ```
+
+6. **MIDDLEWARE**:
+   - **Описание**: Список middleware-классов, которые будут использоваться для обработки запросов и ответов.
+   - **Пример**:
+     ```python
+     MIDDLEWARE = [
+         'django.middleware.security.SecurityMiddleware',
+         'django.contrib.sessions.middleware.SessionMiddleware',
+         'django.middleware.common.CommonMiddleware',
+         'django.middleware.csrf.CsrfViewMiddleware',
+         'django.contrib.auth.middleware.AuthenticationMiddleware',
+         'django.contrib.messages.middleware.MessageMiddleware',
+         'django.middleware.clickjacking.XFrameOptionsMiddleware',
+     ]
+     ```
+
+7. **ROOT_URLCONF**:
+   - **Описание**: Путь к модулю, содержащему корневой URLconf.
+   - **Пример**: `ROOT_URLCONF = 'your_project_name.urls'`
+
+8. **TEMPLATES**:
+   - **Описание**: Настройки для шаблонизаторов.
+   - **Пример**:
+     ```python
+     TEMPLATES = [
+         {
+             'BACKEND': 'django.template.backends.django.DjangoTemplates',
+             'DIRS': [BASE_DIR / 'templates'],
+             'APP_DIRS': True,
+             'OPTIONS': {
+                 'context_processors': [
+                     'django.template.context_processors.debug',
+                     'django.template.context_processors.request',
+                     'django.contrib.auth.context_processors.auth',
+                     'django.contrib.messages.context_processors.messages',
+                 ],
+             },
+         },
+     ]
+     ```
+
+9. **WSGI_APPLICATION**:
+   - **Описание**: Путь к WSGI-приложению.
+   - **Пример**: `WSGI_APPLICATION = 'your_project_name.wsgi.application'`
+
+10. **DATABASES**:
+    - **Описание**: Настройки для баз данных.
+    - **Пример**:
+      ```python
+      DATABASES = {
+          'default': {
+              'ENGINE': 'django.db.backends.sqlite3',
+              'NAME': BASE_DIR / 'db.sqlite3',
+          }
+      }
+      ```
+
+11. **AUTH_PASSWORD_VALIDATORS**:
+    - **Описание**: Список валидаторов паролей.
+    - **Пример**:
+      ```python
+      AUTH_PASSWORD_VALIDATORS = [
+          {
+              'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+          },
+          {
+              'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+          },
+          {
+              'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+          },
+          {
+              'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+          },
+      ]
+      ```
+
+12. **LANGUAGE_CODE**:
+    - **Описание**: Код языка по умолчанию.
+    - **Пример**: `LANGUAGE_CODE = 'en-us'`
+
+13. **TIME_ZONE**:
+    - **Описание**: Часовой пояс по умолчанию.
+    - **Пример**: `TIME_ZONE = 'UTC'`
+
+14. **USE_I18N**:
+    - **Описание**: Флаг, указывающий, включена ли интернационализация.
+    - **Пример**: `USE_I18N = True`
+
+15. **USE_L10N**:
+    - **Описание**: Флаг, указывающий, включена ли локализация.
+    - **Пример**: `USE_L10N = True`
+
+16. **USE_TZ**:
+    - **Описание**: Флаг, указывающий, включена ли поддержка временных зон.
+    - **Пример**: `USE_TZ = True`
+
+17. **STATIC_URL**:
+    - **Описание**: URL-префикс для статических файлов.
+    - **Пример**: `STATIC_URL = '/static/'`
+
+18. **DEFAULT_AUTO_FIELD**:
+    - **Описание**: Поле по умолчанию для автоматически создаваемых первичных ключей.
+    - **Пример**: `DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'`
+
+Эти константы являются лишь частью всех возможных настроек, которые можно использовать в `settings.py`. В зависимости от ваших потребностей, вы можете добавлять и изменять другие настройки, такие как настройки для кэширования, аутентификации, электронной почты и т.д.
+
+**commit: `lesson_60: авторизация опционально через email или username`**
