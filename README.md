@@ -1447,3 +1447,9 @@ urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 А так же мелкие правки в стили для отображения фотографии пользователя
 
 **commit: `lesson_62: добавили аватар в профиле`**
+
+- Отсутствовал маршрут в `urls.py` для `UserPasswordChangeDone`
+- Добавили его и протестировали работу смены пароля
+- Отсутствовал параметр `context_object_name` в `UserCardsView`, из-за чего не грузились карточки пользователя
+
+**commit: `lesson_62: доделал смену пароля в ЛК`**

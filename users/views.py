@@ -77,6 +77,7 @@ class UserCardsView(ListView):
     model = Card
     template_name = 'users/profile_cards.html'
     extra_context = {'title': 'Мои карточки', 'active_tab': 'profile_cards'}
+    context_object_name = 'cards'
 
     def get_queryset(self):
         return Card.objects.filter(author=self.request.user).order_by('-upload_date')
