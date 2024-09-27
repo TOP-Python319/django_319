@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 from django.conf.global_settings import AUTHENTICATION_BACKENDS
@@ -153,3 +154,8 @@ LOGIN_URL = 'users:login'
 # ]  # стандартный бэкенд для аутентификации по username
 
 AUTHENTICATION_BACKENDS += ['users.authentication.EmailAuthBackend']
+
+AUTH_USER_MODEL = 'users.User'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
