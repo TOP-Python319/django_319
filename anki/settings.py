@@ -14,6 +14,9 @@ import os
 from pathlib import Path
 
 from django.conf.global_settings import AUTHENTICATION_BACKENDS
+from dotenv import load_dotenv
+
+load_dotenv()  # загружаем переменные окружения из файла .env, который должен лежать в той же директории, что и manage.py
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-645l+-*(fo_g6o!#&$2xadf!@ul!igyp&2#z^w8p9b6t7!ek=c'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -154,8 +157,15 @@ LOGIN_URL = 'users:login'
 # ]  # стандартный бэкенд для аутентификации по username
 
 AUTHENTICATION_BACKENDS += ['users.authentication.EmailAuthBackend']
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 AUTH_USER_MODEL = 'users.User'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = True
