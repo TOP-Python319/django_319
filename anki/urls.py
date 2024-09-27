@@ -1,10 +1,12 @@
 """
 anki/urls.py
 """
-from django.views.decorators.cache import cache_page
-
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django.views.decorators.cache import cache_page
+
 from anki import settings
 from cards import views
 
@@ -34,6 +36,8 @@ if settings.DEBUG:
         path('__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns
 
+# добавляем обработку медиафайлов
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # определяем кастомный обработчик 404 ошибки
 handler404 = views.PageNotFoundView.as_view()

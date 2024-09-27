@@ -53,7 +53,8 @@ class ProfileUserForm(forms.ModelForm):
     )
     photo = forms.ImageField(
         label='Аватар',
-        required=False
+        required=False,
+        widget=forms.FileInput(attrs={'class': 'form-control'})
     )
     username = forms.CharField(
         disabled=True,  # не редактируемое поле
