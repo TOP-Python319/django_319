@@ -1586,3 +1586,5 @@ services:
    - Используйте команду docker-compose up для запуска вашего приложения и его зависимостей.
 
 **commit: `lesson_62: информация о Docker`**
+
+**commit: `lesson_62: перенесли DEBUG в .env`**
