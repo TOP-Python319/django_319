@@ -4,8 +4,10 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import TemplateView, CreateView, ListView
 from django.views.generic.edit import UpdateView
+from social_django.utils import psa
 
 from .forms import (
     CustomAuthenticationForm,
@@ -28,6 +30,28 @@ class LoginUser(MenuMixin, LoginView):
         if self.request.GET.get('next', '').strip():
             return self.request.POST.get('next')
         return reverse_lazy('catalog')
+
+
+class SocialAuthView(View):
+
+    @psa('social:complete')
+    def save_oauth_data(self, request, backend):
+        user = request.user
+        if backend.name == 'github':
+            user.github_id = backend.get_user_id(request)
+        elif backend.name == 'vk-oauth2':
+            user.vk_id = backend.get_user_id(request)
+        user.save()
+        return redirect('users:profile')
+
+    def post(self, request, *args, **kwargs):
+        if 'provider' in request.POST:
+            provider = request.POST['provider']
+            if provider == 'github':
+                return redirect('social:begin', backend='github')
+            elif provider == 'vk-oauth2':
+                return redirect('social:begin', backend='vk-oauth2')
+        return redirect('users:profile')
 
 
 class LogoutUser(LogoutView):

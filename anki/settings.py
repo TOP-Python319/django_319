@@ -66,6 +66,7 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'debug_toolbar',
+    'social_django',
 
     'cards',
     'users',
@@ -80,6 +81,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'anki.urls'
@@ -90,13 +92,15 @@ TEMPLATES = [
         'DIRS': [
             BASE_DIR / 'templates'
         ],
-        'APP_DIRS': True, # Поиск шаблонов внутри приложений
+        'APP_DIRS': True,  # Поиск шаблонов внутри приложений
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -134,6 +138,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
+#     'social_core.backends.vk.VKOAuth2',
+# )
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -170,7 +177,11 @@ LOGIN_URL = 'users:login'
 #     'django.contrib.auth.backends.ModelBackend',
 # ]  # стандартный бэкенд для аутентификации по username
 
-AUTHENTICATION_BACKENDS += ['users.authentication.EmailAuthBackend']
+AUTHENTICATION_BACKENDS += [
+    'users.authentication.EmailAuthBackend',
+    'social_core.backends.vk.VKOAuth2',
+    'social_core.backends.github.GithubOAuth2'
+]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 AUTH_USER_MODEL = 'users.User'
@@ -183,3 +194,15 @@ EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = True
+EMAIL_ADMIN = os.getenv('EMAIL_HOST_USER')
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_GITHUB_KEY = os.getenv('GITHUB_KEY')
+SOCIAL_AUTH_GITHUB_SECRET = os.getenv('GITHUB_SECRET')
+SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('VK_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('VK_SECRET')
+
+LOGIN_REDIRECT_URL = '/users/profile/'
+LOGOUT_REDIRECT_URL = '/'
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
+SOCIAL_AUTH_VK_APP_USER_MODE = 2
