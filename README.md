@@ -1617,3 +1617,9 @@ if DEBUG:
     ]
 
 **commit: `lesson_63: дополнительная настройка для работы проекта`**
+
+```bash
+python3 manage.py migrate && echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'ad@ad.com', '12345')" | python3 manage.py shell && python3 manage.py loaddata dump.json
+```
+
+**commit: `lesson_63: команда для сборки проекта в timewebcloud`**
