@@ -31,10 +31,24 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['*']
-
-INTERNAL_IPS = [
+# это список хостов, которые могут обращаться к нашему сайту
+ALLOWED_HOSTS = [
+    'https://cardslurm.ru',
+    'https://www.cardslurm.ru',
     '127.0.0.1',
+    'localhost',
+]
+
+# закрываем доступ к отладочной панели Django, если не включён DEBUG режим
+if DEBUG:
+    INTERNAL_IPS = [
+        '127.0.0.1',
+    ]
+
+# список доменов, с которых можно отправлять POST-запросы без токена CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'https://cardslurm.ru',
+    'https://www.cardslurm.ru',
 ]
 
 
