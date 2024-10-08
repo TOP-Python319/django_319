@@ -33,8 +33,8 @@ DEBUG = os.getenv('DEBUG')
 
 # это список хостов, которые могут обращаться к нашему сайту
 ALLOWED_HOSTS = [
-    'https://cardslurm.ru',
-    'https://www.cardslurm.ru',
+    'cardslurm.ru',
+    'www.cardslurm.ru',
     '127.0.0.1',
     'localhost',
 ]

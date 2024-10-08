@@ -1623,3 +1623,5 @@ python3 manage.py migrate && echo "from django.contrib.auth import get_user_mode
 ```
 
 **commit: `lesson_63: команда для сборки проекта в timewebcloud`**
+
+**commit: `lesson_63: FIX: ALLOWED_HOSTS`**
