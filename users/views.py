@@ -82,6 +82,9 @@ class ProfileUser(LoginRequiredMixin, MenuMixin, UpdateView):
 
     def get_object(self, queryset=None):
         # Возвращает объект пользователя для редактирования
+        user = self.request.user
+        if user.groups.filter(name='Moderators').exists():
+            user.moderator = True
         return self.request.user
 
 
