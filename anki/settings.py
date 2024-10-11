@@ -30,6 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
+print(f'\nDEBUG: {DEBUG}\n')
 
 # это список хостов, которые могут обращаться к нашему сайту
 ALLOWED_HOSTS = [

@@ -29,6 +29,18 @@
         В каталог
       </a>
         <div>
+          {% if user.is_authenticated and perms.cards.change_card and card.author.id == user.id or user.is_superuser %}
+            <a href="{% url 'edit_card' card.pk %}" class="btn btn-dark btn-sm ms-3">
+              <i class="bi bi-pencil"></i>
+            </a>
+          {% endif %}
+
+          {% if user.is_authenticated and perms.cards.delete_card and card.author.id == user.id or user.is_superuser %}
+            <a href="{% url 'delete_card' card.pk %}" class="btn btn-dark btn-sm">
+              <i class="bi bi-trash"></i>
+            </a>
+          {% endif %}
+
           <i class="bi bi-eye"></i> {{ card.views }}
           <i class="bi bi-star-fill"></i> {{ card.adds }}
           <small class="text-muted">Дата загрузки: {{ card.upload_date }}</small>

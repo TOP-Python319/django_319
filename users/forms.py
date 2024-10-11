@@ -32,6 +32,14 @@ class RegisterUserForm(UserCreationForm):
             raise forms.ValidationError('Пользователь с такой почтой уже существует.')  # проверка на уникальность почты
         return email
 
+    # def save(self, commit=True):
+    #     user = super().save(commit=False)
+    #     user.set_password(self.cleaned_data['password'])
+    #     if commit:
+    #         user.save()
+    #     return user
+
+
 
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(

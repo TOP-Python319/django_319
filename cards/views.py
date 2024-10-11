@@ -1,14 +1,12 @@
 import os
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.cache import cache
 from django.db.models import F, Q
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from django.views import View
-from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
@@ -200,19 +198,27 @@ class AddCardCreateView(LoginRequiredMixin, MenuMixin, CreateView):
         return super().form_valid(form)  # Вызываем базовый метод для сохранения формы
 
 
-class EditCardUpdateView(LoginRequiredMixin, MenuMixin, UpdateView):
+class EditCardUpdateView(LoginRequiredMixin, PermissionRequiredMixin, MenuMixin, UpdateView):
     model = Card
     form_class = CardForm
     template_name = 'cards/add_card.html'
     success_url = reverse_lazy('catalog')
     redirect_field_name = 'next'  # Имя параметра URL, используемого для перенаправления после успешного входа в систему
+    permission_required = 'cards.change_card'  # указываем какое право нужно иметь для доступа к данному представлению
+
+    def has_permission(self) -> bool:
+        return self.request.user.is_staff or self.request.user == self.get_object().author
 
 
-class DeleteCardView(LoginRequiredMixin, MenuMixin, DeleteView):
+class DeleteCardView(LoginRequiredMixin, PermissionRequiredMixin, MenuMixin, DeleteView):
     model = Card  # Указываем модель, с которой будет работать представление
     success_url = reverse_lazy('catalog')  # URL, на который будет перенаправлен пользователь после удаления
     template_name = 'cards/delete_card.html'  # Путь к шаблону представления, для отображения формы подтверждения удаления
     redirect_field_name = 'next'  # Имя параметра URL, используемого для перенаправления после успешного входа в систему
+    permission_required = 'cards.delete_card'  # указываем какое право нужно иметь для доступа к данному представлению
+
+    def has_permission(self) -> bool:
+        return self.request.user.is_staff or self.request.user == self.get_object().author
 
 
 def handle_uploaded_file(f):

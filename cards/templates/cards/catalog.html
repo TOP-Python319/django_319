@@ -1,7 +1,6 @@
 <!-- cards/templates/cards/catalog.html -->
 <!-- Использует шаблон cards/templates/cards/include/card_preview.html -->
 {% extends "base.html" %}
-{% load cache %}
 
 {% block head %}
     <style>
@@ -125,11 +124,9 @@
   Новых запросов не будет.
 {% endcomment %}
 <p>Всего карточек в каталоге: {{ page_obj.paginator.count }}</p>
-{% cache 90 catalog_content page_obj.number sort order search_query %}
   {% for card in cards %}
       {% include "cards/include/card_preview.html" %}
   {% endfor %}
-{% endcache %}
 </div>
 </div>
 </div>
