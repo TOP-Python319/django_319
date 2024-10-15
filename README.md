@@ -1894,3 +1894,32 @@ python3 manage.py create_moderators_group
 - в интерфейсе деплоя, в строке `Команда сборки` нужно написать команду `bash deploy.sh`
 - 
 **commit: `lesson_64: добавили скрипт для деплоя`**
+
+
+## Lesson 65
+
+`UserPassesTestMixin` - это миксин, который позволяет проверить, проходит ли пользователь тест, прежде чем получить доступ к представлению.
+`test_func` - это метод, который определяет, проходит ли пользователь тест.
+Добавим в представление для редактирования карточки проверку на то, является ли пользователь автором карточки.
+
+```python
+    # test_func - метод для миксина UserPassesTestMixin, который проверяет, что пользователь является автором карточки
+    def test_func(self):
+        card = self.get_object()
+        user = self.request.user
+        is_moderator = user.groups.filter(name='Модераторы').exists()
+        is_administrator = user.is_superuser 
+        # is_superuser - это булево поле, которое указывает, является ли пользователь суперпользователем
+        # is_staff - это булево поле, которое указывает, имеет ли пользователь доступ к административной панели
+        return user == card.author or is_moderator or is_administrator
+        
+```
+
+<!-- Обновили логику в шаблоне card_preview.html -->
+```html
+{% if perms.cards.change_card or user == card.author %}
+    <a href="{% url 'edit_card' card.pk %}" class="btn btn-dark ms-3"><i class="bi bi-pencil-fill"></i></a>
+{% endif %}
+```
+
+**commit: `lesson_65: добавил проверку на авторство карточки в представление для редактирования карточки`**

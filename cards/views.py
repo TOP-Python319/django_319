@@ -1,10 +1,15 @@
 import os
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
 from django.core.cache import cache
 from django.db.models import F, Q
 from django.http import HttpResponse, JsonResponse
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView, DetailView
@@ -198,7 +203,13 @@ class AddCardCreateView(LoginRequiredMixin, MenuMixin, CreateView):
         return super().form_valid(form)  # Вызываем базовый метод для сохранения формы
 
 
-class EditCardUpdateView(LoginRequiredMixin, PermissionRequiredMixin, MenuMixin, UpdateView):
+class EditCardUpdateView(
+    LoginRequiredMixin,
+    # PermissionRequiredMixin,
+    MenuMixin,
+    UserPassesTestMixin,
+    UpdateView,
+):
     model = Card
     form_class = CardForm
     template_name = 'cards/add_card.html'
@@ -206,8 +217,19 @@ class EditCardUpdateView(LoginRequiredMixin, PermissionRequiredMixin, MenuMixin,
     redirect_field_name = 'next'  # Имя параметра URL, используемого для перенаправления после успешного входа в систему
     permission_required = 'cards.change_card'  # указываем какое право нужно иметь для доступа к данному представлению
 
-    def has_permission(self) -> bool:
-        return self.request.user.is_staff or self.request.user == self.get_object().author
+    # def has_permission(self) -> bool:
+    #     return self.request.user.is_staff or self.request.user == self.get_object().author
+
+    def test_func(self):
+        card = self.get_object()
+        user = self.request.user
+        is_moderator = user.groups.filter(name='Moderators').exists()
+        is_administrator = user.is_superuser
+
+        return user == card.author or is_moderator or is_administrator
+
+    def handle_no_permission(self) -> HttpResponseRedirect:
+        return super().handle_no_permission()
 
 
 class DeleteCardView(LoginRequiredMixin, PermissionRequiredMixin, MenuMixin, DeleteView):
