@@ -88,19 +88,19 @@ class ProfileUser(LoginRequiredMixin, MenuMixin, UpdateView):
         return self.request.user
 
 
-class UserPasswordChange(PasswordChangeView):
+class UserPasswordChange(MenuMixin, PasswordChangeView):
     form_class = UserPasswordChangeForm
     template_name = 'users/password_change_form.html'
     extra_context = {'title': 'Смена пароля', 'active_tab': 'password_change'}
     success_url = reverse_lazy('users:password_change_done')
 
 
-class UserPasswordChangeDone(PasswordChangeView):
+class UserPasswordChangeDone(MenuMixin, PasswordChangeView):
     template_name = 'users/password_change_done.html'
     extra_context = {'title': 'Смена пароля завершена'}
 
 
-class UserCardsView(ListView):
+class UserCardsView(MenuMixin, ListView):
     model = Card
     template_name = 'users/profile_cards.html'
     extra_context = {'title': 'Мои карточки', 'active_tab': 'profile_cards'}
