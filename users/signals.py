@@ -1,6 +1,6 @@
 import asyncio
 
-from django.db.models.signals import post_save, post_delete, p
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from anki.settings import TELEGRAM_BOT_TOKEN, YOUR_PERSONAL_CHAT_ID, DEBUG
