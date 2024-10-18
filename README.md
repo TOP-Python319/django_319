@@ -1986,5 +1986,7 @@ JS — [Сергей Балакирев JS](https://www.youtube.com/playlist?lis
 **commit: `lesson_66: добавили CardByCategoryListView для просмотра карточек по категориям`**
 
 - добавили `Category` в административную панель
-- 
+
 **commit: `lesson_66: добавили Category в административную панель`**
+
+**commit: `lesson_66: добавили кнопку для создания карточки`**
