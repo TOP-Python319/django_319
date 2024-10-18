@@ -7,7 +7,7 @@ import telegram
 load_dotenv()
 
 # настройка логирования
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 
 async def send_telegram_message(
