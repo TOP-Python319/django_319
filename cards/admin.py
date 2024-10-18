@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Card
+from .models import Card, Category
 from django.contrib.admin import SimpleListFilter
 
 
@@ -64,3 +64,9 @@ class CardAdmin(admin.ModelAdmin):
     def set_unchecked(self, request, queryset):
         updated = queryset.update(status=Card.Status.UNCHECKED)
         self.message_user(request, f'{updated} карточек было отмечено как не проверенные', 'warning')
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'name',)
+    ordering = ('pk',)

@@ -191,8 +191,7 @@ def preview_card_ajax(request):
                 'tags': ['тест', 'тег'],
 
             }
-        }
-                                        )
+        })
         return JsonResponse({'html': html_content})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
