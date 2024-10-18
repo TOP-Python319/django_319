@@ -1956,3 +1956,26 @@ python3 manage.py create_moderators_group
 **commit: `lesson_65: небольшие фиксы по коду`
 
 **commit: `lesson_65: проверка гипотезы, о том что БД не может наполниться даным из дампа`
+
+
+## Lesson 66
+
+Python/PHP — Python. Нет смысла добавлять PHP в этот стек.
+Они относительно взаимозаменяемы.
+
+В случае если захочется идти по пути фуллстек-разработчика
+JS — [Сергей Балакирев JS](https://www.youtube.com/playlist?list=PLA0M1Bcd0w8x9TltCzZDhw0SatK1d10yy)
+Фреймворки — Vue, React, Svelte, Angular
+
+Если идти дальше по пути бэкенд-разработчика:
+**Минимум:**
+ - SQL — база данных, PostgreSQL/MySQL/MariaDB
+ - Docker — контейнеры [Docker](https://youtu.be/wgA3yntF_ek?si=JwRhDRkL9zK2_EmY)
+ - Redis — кэширующая БД, любые видео и текстовые материалы
+ 
+**Дополнительно:**
+ - FastAPI — ещё один фреймворк, но в отличие от Django очень минималистичный [FastAPI](https://www.youtube.com/watch?v=gBfkX9H3szQ&list=PLeLN0qH0-mCVQKZ8-W1LhxDcVlWtTALCS)
+ - CI/CD — Github Actions, Jenkins
+ - unittest
+
+**commit: `lesson_66: дальнейший путь разработчика`
