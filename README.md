@@ -1979,3 +1979,8 @@ JS — [Сергей Балакирев JS](https://www.youtube.com/playlist?lis
  - unittest
 
 **commit: `lesson_66: дальнейший путь разработчика`
+
+- добавили `CardByCategoryListView` для просмотра карточек по категориям
+- добавили ссылки на названия категорий в карточках
+  
+**commit: `lesson_66: добавили CardByCategoryListView для просмотра карточек по категориям`**

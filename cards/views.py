@@ -10,7 +10,7 @@ from django.core.cache import cache
 from django.db.models import F, Q
 from django.http import HttpResponse, JsonResponse
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.views.generic import TemplateView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -18,7 +18,7 @@ from django.views.generic.list import ListView
 from django.urls import reverse_lazy
 
 from .forms import CardForm, UploadFileForm
-from .models import Card
+from .models import Card, Category
 
 
 info = {
@@ -128,19 +128,25 @@ class CatalogView(MenuMixin, ListView):
         return context
 
 
-def get_categories(request):
+class CardByCategoryListVies(MenuMixin, ListView):
+    """Возвращает карточки по категории для представления в каталоге
     """
-    Возвращает все категории для представления в каталоге
-    """
-    # Проверка работы базового шаблона
-    return render(request, 'base.html', info)
 
+    model = Card
+    template_name = 'cards/catalog.html'
+    context_object_name = 'cards'
+    paginate_by = 30
 
-def get_cards_by_category(request, slug):
-    """
-    Возвращает карточки по категории для представления в каталоге
-    """
-    return HttpResponse(f'Cards by category {slug}')
+    def get_queryset(self):
+        category_name = self.kwargs.get('category_name')
+        category = get_object_or_404(Category, name=category_name)
+
+        return Card.objects.filter(category=category)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = get_object_or_404(Category, name=self.kwargs.get('category_name'))
+        return context
 
 
 def get_cards_by_tag(request, tag_id):
