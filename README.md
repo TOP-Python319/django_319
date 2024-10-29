@@ -2299,3 +2299,5 @@ class CardViewsTest(TestCase):
 **commit: `lesson_70: расширили чат`**
 
 **commit: `lesson_70: добавили стили в чат`**
+
+**commit: `lesson_70: переписали чат с FBV на CBV`**
