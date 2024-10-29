@@ -3,9 +3,12 @@ from users.models import User  # Импортируйте вашу кастом�
 
 
 class Message(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages', default=1)
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages', default=1)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    is_broadcast = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f'{self.user.username}: {self.content}'
