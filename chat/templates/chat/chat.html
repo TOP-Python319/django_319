@@ -1,40 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Chat</title>
-</head>
-<body>
-    <h1>Chat</h1>
+{% extends 'base.html' %}
+
+{% block title %}Чат{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Чат</h1>
     {% if user.is_superuser %}
         <div>
-            <h2>Users</h2>
-            <ul>
+            <h2>Пользователи</h2>
+            <ul class="list-group">
                 {% for user in users %}
-                    <li><a href="{% url 'chat' user.id %}">{{ user.username }}</a></li>
+                    <li class="list-group-item"><a href="{% url 'chat' user.id %}">{{ user.username }}</a></li>
                 {% endfor %}
             </ul>
         </div>
     {% endif %}
     <div>
-        <h2>Messages</h2>
-        <ul>
+        <h2>Сообщения</h2>
+        <ul class="list-group">
             {% for message in messages %}
-                <li>{{ message.sender.username }}: {{ message.content }}</li>
+                <li class="list-group-item">{{ message.sender.username }}: {{ message.content }}</li>
             {% endfor %}
         </ul>
     </div>
     <div>
-        <h2>Send a message</h2>
+        <h2>Отправить сообщение</h2>
         <form method="post">
             {% csrf_token %}
-            {{ form.content.label_tag }} {{ form.content }}
+            <div class="mb-3">
+                {{ form.content.label_tag }} {{ form.content }}
+            </div>
             {% if user.is_superuser %}
-                <button type="submit" name="send_to_all" value="True">Send to All</button>
-                <button type="submit" name="send_to_all" value="False">Send to {{ current_user_id }}</button>
+                <button type="submit" name="send_to_all" value="True" class="btn btn-primary">Отправить всем</button>
+                <button type="submit" name="send_to_all" value="False" class="btn btn-secondary">Отправить {{ current_user_id }}</button>
             {% else %}
-                <button type="submit">Send</button>
+                <button type="submit" class="btn btn-primary">Отправить</button>
             {% endif %}
         </form>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
+
+{% block footer %}
+<p class="text-muted">Приложение интервального повторения "Anki", в рамках учебного проекта Академии TOP © 2024</p>
+{% endblock %}

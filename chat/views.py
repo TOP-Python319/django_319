@@ -5,6 +5,7 @@ from .models import Message
 from .forms import MessageForm
 from users.models import User
 
+
 @login_required
 def chat(request, user_id=None):
     if request.method == 'POST':

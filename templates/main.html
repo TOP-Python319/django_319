@@ -9,13 +9,13 @@ root/templates/main.html
 3. Блок footer
 {% endcomment %}
 
-
 {% block title %}Главная страница{% endblock %}
 
 {% block content %}
     <h1>Главная страница сайта</h1>
     <p>Добро пожаловать на главную страницу сайта!</p>
     <p>На сайте зарегистрировано {{ users_count }} пользователей.</p>
+    {% include "chat/chat.html" %}
 {% endblock %}
 
 {% block footer %}

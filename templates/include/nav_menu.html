@@ -22,6 +22,9 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'users:logout' %}">Выйти</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'chat' %}">Чат</a>
+        </li>
         {% else %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'users:login' %}">Войти</a>
