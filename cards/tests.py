@@ -77,7 +77,7 @@ class CardViewTests(TestCase):
         )
         self.category = Category.objects.create(
             name='test_category'
-        )
+        )h
         self.tag = Tag.objects.create(
             name='test_tag'
         )

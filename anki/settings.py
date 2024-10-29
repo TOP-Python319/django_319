@@ -71,6 +71,7 @@ INSTALLED_APPS = [
 
     'cards',
     'users',
+    'chat',
 ]
 
 MIDDLEWARE = [

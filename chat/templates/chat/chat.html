@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat with Admin</title>
+</head>
+<body>
+    <h1>Chat with Admin</h1>
+
+    <div id="chat-log">
+        {% for message in messages %}
+            <div>
+                <strong>{{ message.user.username }}:</strong> {{ message.content }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>
