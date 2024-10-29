@@ -1,40 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Chat</title>
-</head>
-<body>
-    <h1>Chat</h1>
+{% extends 'base.html' %}
+{% block title %}Чат{% endblock %}
+{% block content %}
+<div class="container mt-3">
+    <h1>Чат</h1>
     {% if user.is_superuser %}
-        <div>
-            <h2>Users</h2>
-            <ul>
+        <div class="container text-center">
+            <div class="row" >
                 {% for user in users %}
-                    <li><a href="{% url 'chat' user.id %}">{{ user.username }}</a></li>
+                    <div class="col"><a href="{% url 'chat' user.id %}">{{ user.username }}</a></div>
                 {% endfor %}
-            </ul>
+            </div>
         </div>
     {% endif %}
-    <div>
-        <h2>Messages</h2>
-        <ul>
-            {% for message in messages %}
-                <li>{{ message.sender.username }}: {{ message.content }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div>
-        <h2>Send a message</h2>
+    <div class="mb-3">
         <form method="post">
             {% csrf_token %}
-            {{ form.content.label_tag }} {{ form.content }}
+            <div class="mb-3">
+                {{ form.content.label_tag }} {{ form.content }}
+            </div>
             {% if user.is_superuser %}
-                <button type="submit" name="send_to_all" value="True">Send to All</button>
-                <button type="submit" name="send_to_all" value="False">Send to {{ current_user_id }}</button>
+                <button type="submit" name="send_to_all" value="True" class="btn btn-warning">Отправить всем</button>
+                <button type="submit" name="send_to_all" value="False" class="btn btn-dark">Отправить</button>
             {% else %}
-                <button type="submit">Send</button>
+                <button type="submit" class="btn btn-primary">Отправить</button>
             {% endif %}
         </form>
     </div>
-</body>
-</html>
+    <div>
+        <ul class="list-group">
+            {% for message in messages %}
+                <li class="list-group-item">{{ message.sender.username }}: {{ message.content }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+    <p class="text-muted">Приложение интервального повторения "Anki", в рамках учебного проекта Академии TOP © 2024</p>
+{% endblock %}

@@ -2297,3 +2297,5 @@ class CardViewsTest(TestCase):
 - поменяли шаблон для представления чата в `templates/chat/`
 
 **commit: `lesson_70: расширили чат`**
+
+**commit: `lesson_70: добавили стили в чат`**
